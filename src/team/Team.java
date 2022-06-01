@@ -2,9 +2,9 @@ package team;
 
 import course.Course;
 
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
+
 
 public class Team {
     TreeMap<Integer, Member> team;
@@ -22,10 +22,15 @@ public class Team {
 
     public void doIt(Course course) {
         passedIDs = team.keySet();
-        for (int height: course.getHeightsOfBarriers()) {
-            passedIDs = passedIDs.stream().filter(id -> team.get(id).getMaxBarrierHeight() >= height)
-                    .collect(Collectors.toSet());
+        OptionalInt maxBarrierHeight = Arrays.stream(course.getHeightsOfBarriers()).max();
+        if(maxBarrierHeight.isPresent()) {
+            int maxHeight = maxBarrierHeight.getAsInt();
+            passedIDs = passedIDs.stream().filter(id -> isPassed(id, maxHeight)).collect(Collectors.toSet());
         }
+    }
+
+    private boolean isPassed(int id, int height) {
+        return team.get(id).getMaxBarrierHeight() >= height;
     }
 
     public void showResult() {
